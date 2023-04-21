@@ -1,4 +1,4 @@
-package com.example.gameserver.model;
+package com.example.gameserver.model.rest;
 
 import org.springframework.lang.NonNull;
 
