@@ -1,6 +1,6 @@
 package com.example.gameserver.model.db;
 
-import com.example.gameserver.model.rest.CreateUserRequest;
+import com.example.gameserver.model.rest.UserRequest;
 import jakarta.persistence.*;
 
 
@@ -48,7 +48,7 @@ public class User {
 
     // Other getters and setters
 
-    public static User createFromUserRequest(CreateUserRequest request){
+    public static User createFromUserRequest(UserRequest request){
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());

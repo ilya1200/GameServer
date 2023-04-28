@@ -3,7 +3,7 @@ package com.example.gameserver.model.rest;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
-public class CreateUserRequest {
+public class UserRequest {
     @NotNull(message = "The username is required.")
     @NotEmpty(message = "The username is required.")
     private String username;
