@@ -5,6 +5,7 @@ import com.example.gameserver.jpa.UserRepository;
 import com.example.gameserver.model.db.Session;
 import com.example.gameserver.model.db.User;
 import com.example.gameserver.model.rest.UserRequest;
+import com.example.gameserver.utils.ServerUtils;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class UsersController {
     public ResponseEntity<?> addUser(@RequestBody @Valid UserRequest request){
         if(this.userRepository.existsByUsername(request.getUsername()))
         {
-            return this.createErrorResponse("username", "The username "+ request.getUsername()+" is already exist");
+            return ServerUtils.createErrorResponse("username", "The username "+ request.getUsername()+" is already exist");
         }
         User user = this.userRepository.save(User.createFromUserRequest(request));
         Session session = this.sessionRepository.save(new Session(user.getId()));
@@ -42,10 +43,10 @@ public class UsersController {
         User user = this.userRepository.findByUsername(request.getUsername());
         if(user == null)
         {
-            return this.createErrorResponse("username", "The username "+ request.getUsername()+" does not exist");
+            return ServerUtils.createErrorResponse("username", "The username "+ request.getUsername()+" does not exist");
         }
         if(!request.getPassword().equals(user.getPassword())){
-            return this.createErrorResponse("password", "Wrong password");
+            return ServerUtils.createErrorResponse("password", "Wrong password");
         }
 
         Session session = this.sessionRepository.save(new Session(user.getId()));
@@ -63,11 +64,5 @@ public class UsersController {
             errors.put(fieldName, errorMessage);
         });
         return errors;
-    }
-
-    public ResponseEntity<?> createErrorResponse(String field, String errorMessage){
-        Map<String, String> errors = new HashMap<String, String>();
-        errors.put(field, errorMessage);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 }
