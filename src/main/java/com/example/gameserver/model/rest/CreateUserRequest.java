@@ -1,10 +1,14 @@
 package com.example.gameserver.model.rest;
 
-import org.springframework.lang.NonNull;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 public class CreateUserRequest {
+    @NotNull(message = "The username is required.")
+    @NotEmpty(message = "The username is required.")
     private String username;
-    @NonNull
+    @NotNull(message = "The password is required.")
+    @NotEmpty(message = "The password is required.")
     private String password;
 
     public String getUsername() {
