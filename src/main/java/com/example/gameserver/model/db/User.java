@@ -1,6 +1,7 @@
 package com.example.gameserver.model.db;
 
 import com.example.gameserver.model.rest.UserRequest;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 
