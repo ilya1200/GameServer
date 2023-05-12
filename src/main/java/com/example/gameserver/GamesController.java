@@ -54,7 +54,7 @@ public class GamesController {
     }
 
     @PatchMapping("/{gameId}")
-    public ResponseEntity<?> joinableGame(@RequestHeader("session") String sessionId, @PathVariable UUID gameId){
+    public ResponseEntity<?> joinGame(@RequestHeader("session") String sessionId, @PathVariable UUID gameId){
         User user = this.userRepository.getUserBySessionId(UUID.fromString(sessionId));
         if(user==null){
             return ServerUtils.createErrorResponse("username", "Did not find user by session ID "+ sessionId);
