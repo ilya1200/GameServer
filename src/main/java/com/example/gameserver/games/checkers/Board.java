@@ -37,16 +37,17 @@ public class Board {
     }
 
     public int move(String nextMove, Color color){
-        Pair<Position, Position> positionPositionPair = this.parseMove(nextMove);
-        Position source = positionPositionPair.getFirst();
-        Position target = positionPositionPair.getSecond();
+        Pair<Position, Position> positionPair = this.parseMove(nextMove);
+        Position source = positionPair.getFirst();
+        Position target = positionPair.getSecond();
         Piece piece = pieces[source.getRow()][source.getCol()];
         if (piece == null){
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException(String.format("Cell [%d][%d] is empty.", source.getRow(),source.getCol()));
         }
         if(piece.makeMove(target)){
 //            pieces[source.getRow()][source.getCol()] =
         }
+        return -1; // Placeholder
     }
 
     private Pair<Position, Position> parseMove(String move){
