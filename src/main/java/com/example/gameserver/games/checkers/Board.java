@@ -50,24 +50,19 @@ public class Board {
     }
 
     private Pair<Position, Position> parseMove(String move){
-        if(move.length()!=4){
-            throw new IllegalStateException("Expected move to be 4 chars long, but actual " + move);
-        }
-        if (!('a'<= move.charAt(0) && move.charAt(0) <= 'h')){
-            throw new IllegalStateException();
-        }
-        if (!('1'<= move.charAt(1) && move.charAt(1) <= '8')){
-            throw new IllegalStateException();
-        }
-        if (!('a'<= move.charAt(2) && move.charAt(2) <= 'h')){
-            throw new IllegalStateException();
-        }
-        if (!('1'<= move.charAt(3) && move.charAt(3) <= '8')){
-            throw new IllegalStateException();
+        final String PATTERN = "^[a-h][1-8][a-h][1-8]$";
+
+        if (move == null || !move.matches(PATTERN)){
+            throw new IllegalStateException(String.format("Expected move to match the pattern: %s, but actual: %s",PATTERN, move));
         }
 
-        Position sourcePosition = new Position(move.charAt(0)-'1', move.charAt(1)-'a');
-        Position targetPosition = new Position(move.charAt(2)-'1', move.charAt(3)-'a');
+        final int SOURCE_COL = move.charAt(0)-'a';
+        final int SOURCE_ROW = move.charAt(1)-'1';
+        final int TARGET_COL = move.charAt(2)-'a';
+        final int TARGET_ROW = move.charAt(3)-'1';
+
+        Position sourcePosition = new Position(SOURCE_ROW, SOURCE_COL);
+        Position targetPosition = new Position(TARGET_ROW, TARGET_COL);
         return Pair.of(sourcePosition, targetPosition);
     }
 }
