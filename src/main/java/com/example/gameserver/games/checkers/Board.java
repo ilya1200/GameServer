@@ -3,8 +3,13 @@ package com.example.gameserver.games.checkers;
 
 import org.springframework.data.util.Pair;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Board {
+    public final static int BOARD_SIZE = 8;
     private final Piece[][] pieces = new Piece[8][8];
+    private boolean isWhiteTurn = true;
 
     public Board() {
         // WHITE
@@ -65,5 +70,129 @@ public class Board {
         Position sourcePosition = new Position(SOURCE_ROW, SOURCE_COL);
         Position targetPosition = new Position(TARGET_ROW, TARGET_COL);
         return Pair.of(sourcePosition, targetPosition);
+    }
+
+    private boolean isPieceOfCurrentPlayer(Piece piece){
+        if(isWhiteTurn){
+            return piece.getColor() == Color.WHITE;
+        }else{
+            return piece.getColor() == Color.BLACK;
+        }
+    }
+    private List<List<Position>> suggestValidMoves() {
+
+        List<List<Position>> validMoves = new ArrayList<>();
+
+        for (int row = 0; row < BOARD_SIZE; row++) {
+            for (int col = 0; col < BOARD_SIZE; col++) {
+                if (pieces[row][col] == null || !isPieceOfCurrentPlayer(pieces[row][col])){
+                    continue;
+                }
+
+
+
+                // Check diagonal moves to the right
+                if (isValidMove(row, col, row + 1, col + 1)) {
+                    validMoves.add("(" + row + ", " + col + ") to (" + (row + 1) + ", " + (col + 1) + ")");
+                }
+
+                // Check diagonal moves to the left
+                if (isValidMove(row, col, row + 1, col - 1)) {
+                    validMoves.add("(" + row + ", " + col + ") to (" + (row + 1) + ", " + (col - 1) + ")");
+                }
+
+                // Check jumps to the right
+                if (isValidJump(row, col, row + 1, col + 1, row + 2, col + 2)) {
+                    validMoves.add("(" + row + ", " + col + ") over (" + (row + 1) + ", " + (col + 1) + ") to (" + (row + 2) + ", " + (col + 2) + ")");
+                }
+
+                // Check jumps to the left
+                if (isValidJump(row, col, row + 1, col - 1, row + 2, col - 2)) {
+                    validMoves.add("(" + row + ", " + col + ") over (" + (row + 1) + ", " + (col - 1) + ") to (" + (row + 2) + ", " + (col - 2) + ")");
+                }
+
+            }
+        }
+
+        return validMoves;
+    }
+
+    public Piece getPiece(Position position){
+        if (this.pieces[position.getRow()][position.getCol()] == null){
+            return null;
+        }
+        return this.pieces[position.getRow()][position.getCol()];
+    }
+
+    private boolean isValidMove(int fromRow, int fromCol, int toRow, int toCol) {
+        if (fromRow < 0 || fromRow >= BOARD_SIZE || fromCol < 0 || fromCol >= BOARD_SIZE ||
+                toRow < 0 || toRow >= BOARD_SIZE || toCol < 0 || toCol >= BOARD_SIZE) {
+            return false;
+        }
+
+        char piece = board[fromRow][fromCol];
+        char destination = board[toRow][toCol];
+
+        if (piece != 'r' && piece != 'b' && piece != 'R' && piece != 'B') {
+            return false;
+        }
+
+        if (destination != ' ') {
+            return false;
+        }
+
+        int rowDiff = Math.abs(fromRow - toRow);
+        int colDiff = Math.abs(fromCol - toCol);
+
+        if (rowDiff != 1 || colDiff != 1) {
+            return false;
+        }
+
+        if (piece == 'r' && toRow <= fromRow) {
+            return false;
+        }
+
+        if (piece == 'b' && toRow >= fromRow) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean isValidJump(int fromRow, int fromCol, int jumpRow, int jumpCol, int toRow, int toCol) {
+        if (fromRow < 0 || fromRow >= BOARD_SIZE || fromCol < 0 || fromCol >= BOARD_SIZE ||
+                jumpRow < 0 || jumpRow >= BOARD_SIZE || jumpCol < 0 || jumpCol >= BOARD_SIZE ||
+                toRow < 0 || toRow >= BOARD_SIZE || toCol < 0 || toCol >= BOARD_SIZE) {
+            return false;
+        }
+
+        char piece = board[fromRow][fromCol];
+        char destination = board[toRow][toCol];
+
+        if (piece != 'r' && piece != 'b' && piece != 'R' && piece != 'B') {
+            return false;
+        }
+
+        if (destination != ' ') {
+            return false;
+        }
+
+        int rowDiff = Math.abs(fromRow - toRow);
+        int colDiff = Math.abs(fromCol - toCol);
+
+        if (rowDiff != 2 || colDiff != 2) {
+            return false;
+        }
+
+        int jumpedRow = (fromRow + toRow) / 2;
+        int jumpedCol = (fromCol + toCol) / 2;
+        char jumpedPiece = board[jumpedRow][jumpedCol];
+
+        if (jumpedPiece == ' ' || (piece == 'r' && jumpedPiece != 'b' && jumpedPiece != 'B') ||
+                (piece == 'b' && jumpedPiece != 'r' && jumpedPiece != 'R')) {
+            return false;
+        }
+
+        return true;
     }
 }

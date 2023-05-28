@@ -29,4 +29,8 @@ public class Position implements  Comparable<Position>{
     public int compareTo(Position o) {
         return o.row == this.row && o.col == this.col?0:-1;
     }
+
+    public boolean isValid(){
+        return this.getRow() < 0 || this.getRow() >= Board.BOARD_SIZE || this.getCol() < 0 || this.getCol() >= Board.BOARD_SIZE;
+    }
 }
