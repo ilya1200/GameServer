@@ -81,13 +81,13 @@ public class Piece {
         Piece piece = board.getPiece(target);
         Piece destination = board.getPiece(target);
 
-        if (piece != 'r' && piece != 'b' && piece != 'R' && piece != 'B') {
-            return false;
-        }
-
-        if (destination != ' ') {
-            return false;
-        }
+//        if (piece != 'r' && piece != 'b' && piece != 'R' && piece != 'B') {
+//            return false;
+//        }
+//
+//        if (destination != ' ') {
+//            return false;
+//        }
 
         int rowDiff = Math.abs(fromRow - toRow);
         int colDiff = Math.abs(fromCol - toCol);
@@ -98,12 +98,12 @@ public class Piece {
 
         int jumpedRow = (fromRow + toRow) / 2;
         int jumpedCol = (fromCol + toCol) / 2;
-        char jumpedPiece = board[jumpedRow][jumpedCol];
-
-        if (jumpedPiece == ' ' || (piece == 'r' && jumpedPiece != 'b' && jumpedPiece != 'B') ||
-                (piece == 'b' && jumpedPiece != 'r' && jumpedPiece != 'R')) {
-            return false;
-        }
+//        char jumpedPiece = board[jumpedRow][jumpedCol];
+//
+//        if (jumpedPiece == ' ' || (piece == 'r' && jumpedPiece != 'b' && jumpedPiece != 'B') ||
+//                (piece == 'b' && jumpedPiece != 'r' && jumpedPiece != 'R')) {
+//            return false;
+//        }
 
         return true;
     }
