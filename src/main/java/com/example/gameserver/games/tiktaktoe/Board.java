@@ -16,12 +16,12 @@ public class Board {
         }
     }
 
-    private boolean isValidMove(int row, int column) {
+    public boolean isValidMove(int row, int column) {
         boolean is_move_in_bound = (row >= 0 && row < BOARD_SIZE && column >= 0 && column < BOARD_SIZE);
         return is_move_in_bound && cell[row][column] == BLANK;
     }
 
-    private boolean isWin() {
+    public boolean isWin() {
         // Check rows and columns for a win
         for (int i = 0; i < BOARD_SIZE; i++) {
             boolean rowWin = true;
@@ -66,7 +66,7 @@ public class Board {
     }
 
 
-    private boolean isDraw() {
+    public boolean isDraw() {
         if (isWin()) {
             return false; // If there is a win, it's not a draw
         }
@@ -82,5 +82,24 @@ public class Board {
 
         // All cells are filled, and there is no win, it's a draw
         return true;
+    }
+
+    public void makeMove(char mark, int row, int col) throws IllegalArgumentException {
+        if (!(mark == X || mark == O)){
+            throw new IllegalArgumentException("Illegal mark");
+        }
+        if(!isValidMove(row,col)){
+            throw new IllegalArgumentException("Illegal move");
+        }
+        cell[row][col] = mark;
+    }
+
+    public void displayBoard() {
+        for (char[] chars : cell) {
+            for (char aChar : chars) {
+                System.out.print(" | " + aChar + " | ");
+            }
+            System.out.println();
+        }
     }
 }
