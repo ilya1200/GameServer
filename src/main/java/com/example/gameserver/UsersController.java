@@ -39,13 +39,13 @@ public class UsersController {
     }
 
     @GetMapping()
-    public ResponseEntity<?> getUser(@RequestBody @Valid UserRequest request){
-        User user = this.userRepository.findByUsername(request.getUsername());
+    public ResponseEntity<?> getUser(@RequestParam("username") String username, @RequestParam("password") String password){
+        User user = this.userRepository.findByUsername(username);
         if(user == null)
         {
-            return ServerUtils.createErrorResponse("username", "The username "+ request.getUsername()+" does not exist");
+            return ServerUtils.createErrorResponse("username", "The username "+ username+" does not exist");
         }
-        if(!request.getPassword().equals(user.getPassword())){
+        if(!password.equals(user.getPassword())){
             return ServerUtils.createErrorResponse("password", "Wrong password");
         }
 
