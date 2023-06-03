@@ -1,8 +1,9 @@
 package com.example.gameserver.model.db;
 
 import com.example.gameserver.model.rest.UserRequest;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import java.util.Objects;
 
 
 @Entity
@@ -54,5 +55,17 @@ public class User {
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());
         return user;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

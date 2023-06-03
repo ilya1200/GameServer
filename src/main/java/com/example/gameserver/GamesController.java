@@ -1,11 +1,13 @@
 package com.example.gameserver;
 
+import com.example.gameserver.games.Player;
 import com.example.gameserver.jpa.SessionRepository;
 import com.example.gameserver.jpa.UserRepository;
 import com.example.gameserver.model.Game;
 import com.example.gameserver.model.db.User;
 import com.example.gameserver.model.rest.GameResponse;
 import com.example.gameserver.model.rest.GameRequest;
+import com.example.gameserver.model.rest.MoveRequest;
 import com.example.gameserver.utils.ServerUtils;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -67,6 +69,33 @@ public class GamesController {
             return ServerUtils.createErrorResponse("session", "User with this session already in the game "+ sessionId);
         }
         game.setUserSecond(user);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PostMapping("/{gameId}")
+    public ResponseEntity<?> makeMove(@RequestHeader("session") String sessionId, @PathVariable UUID gameId, @RequestBody MoveRequest moveRequest){
+        User user = this.userRepository.getUserBySessionId(UUID.fromString(sessionId));
+        if(user==null){
+            return ServerUtils.createErrorResponse("username", "Did not find user by session ID "+ sessionId);
+        }
+        Game game = games.get(gameId);
+        if (game == null){
+            return ServerUtils.createErrorResponse("gameId", "Did not find a game by gameId "+ gameId);
+        }
+
+        Player player;
+
+        if (user.equals(game.getUserFirst())){
+            player = Player.FIRST;
+        } else if (user.equals(game.getUserSecond())) {
+            player = Player.SECOND;
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+
+        game.getBoard().makeMove(moveRequest.getMove(), player);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }

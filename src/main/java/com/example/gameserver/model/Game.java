@@ -1,5 +1,6 @@
 package com.example.gameserver.model;
 
+import com.example.gameserver.games.Board;
 import com.example.gameserver.model.db.User;
 
 import java.util.UUID;
@@ -11,11 +12,14 @@ public class Game {
     private User userSecond;
     private final long creationDate;
 
+    private final Board board;
+
     public Game(GameType type, User userFirst) {
         this.id = UUID.randomUUID();
         this.type = type;
         this.userFirst = userFirst;
         this.creationDate = System.currentTimeMillis();
+        this.board = type.createBoard();
     }
 
     public UUID getId() {
@@ -48,5 +52,9 @@ public class Game {
 
     public boolean isFirstUser(User user){
         return this.getUserFirst().getId().equals(user.getId());
+    }
+
+    public Board getBoard() {
+        return board;
     }
 }
