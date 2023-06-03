@@ -1,6 +1,8 @@
 package com.example.gameserver.games.tiktaktoe;
+
 import com.example.gameserver.games.Board;
 import com.example.gameserver.games.Player;
+import org.springframework.data.util.Pair;
 
 public class TicTacToeBoard implements Board{
     private static final int BOARD_SIZE = 3;
@@ -30,14 +32,26 @@ public class TicTacToeBoard implements Board{
         }
     }
 
+    private Pair<Integer, Integer> parseMove(String move){
+        final String PATTERN = "[a-c][1-3]";
+
+        if (move == null || !move.matches(PATTERN)){
+            throw new IllegalStateException(String.format("Expected move to match the pattern: %s, but actual: %s",PATTERN, move));
+        }
+
+        final int COL = move.charAt(0)-'a';
+        final int ROW = move.charAt(1)-'1';
+
+        return Pair.of(ROW, COL);
+    }
+
     @Override
     public void makeMove(String move, Player player) {
-        int row =0 ;
-        int col = 0;
-        // parsing
+        Pair<Integer, Integer> position = parseMove(move);
+        int row = position.getFirst() ;
+        int col = position.getSecond();
+
         this.makeMove(player, row, col);
-
-
 
         if(isWin()){
             isGameFinished = true;
