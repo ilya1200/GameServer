@@ -51,6 +51,13 @@ public class TicTacToeBoard implements Board{
         int row = position.getFirst() ;
         int col = position.getSecond();
 
+        if (isGameFinished){
+            throw new GameException("The game is over");
+        }
+        if (player!=currentPlayer){
+            throw new GameException("It is the turn of player: "+ currentPlayer);
+        }
+
         this.makeMove(player, row, col);
 
         if(isWin()){
@@ -66,7 +73,7 @@ public class TicTacToeBoard implements Board{
 
     private void makeMove(Player player, int row, int col) throws IllegalArgumentException {
         if(!isValidMove(row,col)){
-            throw new IllegalArgumentException("Illegal move");
+            throw new GameException("Illegal move");
         }
         cell[row][col] = player;
     }
