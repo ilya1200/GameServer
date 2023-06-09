@@ -1,9 +1,13 @@
 package com.example.gameserver.games.tiktaktoe;
 
 import com.example.gameserver.games.Board;
+import com.example.gameserver.games.GameStatus;
+import com.example.gameserver.games.Move;
 import com.example.gameserver.games.Player;
 import com.example.gameserver.model.ErrorMessage;
 import org.springframework.data.util.Pair;
+
+import java.util.Vector;
 
 public class TicTacToeBoard implements Board{
     private static final int BOARD_SIZE = 3;
@@ -12,6 +16,8 @@ public class TicTacToeBoard implements Board{
     private Player currentPlayer;
 
     private boolean isGameFinished;
+
+    private final Vector<Move> moves;
 
     public TicTacToeBoard(){
         cell = new Player[BOARD_SIZE][BOARD_SIZE];
@@ -22,6 +28,7 @@ public class TicTacToeBoard implements Board{
         }
         currentPlayer = Player.FIRST;
         isGameFinished = false;
+        moves = new Vector<>();
     }
 
 
@@ -61,15 +68,28 @@ public class TicTacToeBoard implements Board{
 
         this.makeMove(player, row, col);
 
+        GameStatus gameStatus;
         if(isWin()){
             isGameFinished = true;
             System.out.println("Player " + (currentPlayer == Player.FIRST ? Player.FIRST : Player.SECOND) + " won!");
+            gameStatus = GameStatus.FINISHED_WIN;
         } else if (isDraw()) {
             isGameFinished = true;
             System.out.println("Draw!");
+            gameStatus = GameStatus.FINISHED_DRAW;
         }else{
             switchPlayer();
+            gameStatus = GameStatus.PLAYING;
         }
+        moves.add(new Move(move, player, gameStatus));
+    }
+
+    @Override
+    public Move getLastMove() {
+        if (moves.isEmpty()){
+            return null;
+        }
+        return moves.lastElement();
     }
 
     private void makeMove(Player player, int row, int col) throws IllegalArgumentException {

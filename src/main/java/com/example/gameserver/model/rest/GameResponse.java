@@ -1,5 +1,6 @@
 package com.example.gameserver.model.rest;
 
+import com.example.gameserver.games.Move;
 import com.example.gameserver.model.Game;
 import com.example.gameserver.model.GameType;
 import com.example.gameserver.model.db.User;
@@ -11,12 +12,14 @@ public class GameResponse {
     private final GameType type;
     private final String userFirstName;
     private final long creationDate;
+    private final Move lastMove;
 
     public GameResponse(Game game){
         this.id = game.getId();
         this.type = game.getType();
         this.userFirstName = game.getUserFirst().getUsername();
         this.creationDate = game.getCreationDate();
+        this.lastMove = game.getBoard().getLastMove();
     }
 
     public UUID getId() {
@@ -33,5 +36,9 @@ public class GameResponse {
 
     public long getCreationDate() {
         return creationDate;
+    }
+
+    public Move getLastMove() {
+        return lastMove;
     }
 }

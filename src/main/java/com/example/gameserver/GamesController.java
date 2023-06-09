@@ -106,4 +106,24 @@ public class GamesController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+
+    @GetMapping("/{gameId}")
+    public ResponseEntity<?> getUpdates(@RequestHeader("session") String sessionId, @PathVariable UUID gameId){
+        User user = this.userRepository.getUserBySessionId(UUID.fromString(sessionId));
+        if(user==null){
+            return ServerUtils.createErrorResponse("username", ErrorMessage.NO_SESSION_ID,  sessionId);
+        }
+        Game game = games.get(gameId);
+        if (game == null){
+            return ServerUtils.createErrorResponse("gameId", ErrorMessage.INVALID_GAME_ID, gameId);
+        }
+
+        if (user.equals(game.getUserFirst()) || user.equals(game.getUserSecond())){
+            return ResponseEntity.status(HttpStatus.OK).body(new GameResponse(game));
+        }else{
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+
 }
