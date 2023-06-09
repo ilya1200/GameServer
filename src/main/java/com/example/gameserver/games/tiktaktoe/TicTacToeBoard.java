@@ -2,6 +2,7 @@ package com.example.gameserver.games.tiktaktoe;
 
 import com.example.gameserver.games.Board;
 import com.example.gameserver.games.Player;
+import com.example.gameserver.model.ErrorMessage;
 import org.springframework.data.util.Pair;
 
 public class TicTacToeBoard implements Board{
@@ -52,10 +53,10 @@ public class TicTacToeBoard implements Board{
         int col = position.getSecond();
 
         if (isGameFinished){
-            throw new GameException("The game is over");
+            throw new GameException(ErrorMessage.GAME_OVER);
         }
         if (player!=currentPlayer){
-            throw new GameException("It is the turn of player: "+ currentPlayer);
+            throw new GameException(ErrorMessage.ILLEGAL_MOVE);
         }
 
         this.makeMove(player, row, col);
@@ -73,7 +74,7 @@ public class TicTacToeBoard implements Board{
 
     private void makeMove(Player player, int row, int col) throws IllegalArgumentException {
         if(!isValidMove(row,col)){
-            throw new GameException("Illegal move");
+            throw new GameException(ErrorMessage.ILLEGAL_MOVE);
         }
         cell[row][col] = player;
     }

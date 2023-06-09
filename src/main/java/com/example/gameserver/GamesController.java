@@ -1,6 +1,7 @@
 package com.example.gameserver;
 
 import com.example.gameserver.games.Player;
+import com.example.gameserver.games.tiktaktoe.GameException;
 import com.example.gameserver.jpa.SessionRepository;
 import com.example.gameserver.jpa.UserRepository;
 import com.example.gameserver.model.ErrorMessage;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.Utilities;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -95,8 +97,11 @@ public class GamesController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-
-        game.getBoard().makeMove(moveRequest.getMove(), player);
+        try {
+            game.getBoard().makeMove(moveRequest.getMove(), player);
+        }catch (GameException gameException){
+            ServerUtils.createErrorResponse("move", gameException.getErrorMessage());
+        }
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }

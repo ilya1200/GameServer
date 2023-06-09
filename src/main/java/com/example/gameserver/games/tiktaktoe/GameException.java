@@ -1,7 +1,15 @@
 package com.example.gameserver.games.tiktaktoe;
 
+import com.example.gameserver.model.ErrorMessage;
+
 public class GameException extends RuntimeException{
-    public GameException(String message) {
-        super(message);
+    private final ErrorMessage message;
+
+    public GameException(ErrorMessage message) {
+        this.message = message;
+    }
+
+    public ErrorMessage getErrorMessage() {
+        return message;
     }
 }
