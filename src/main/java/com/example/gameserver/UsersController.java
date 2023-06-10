@@ -2,6 +2,7 @@ package com.example.gameserver;
 
 import com.example.gameserver.jpa.SessionRepository;
 import com.example.gameserver.jpa.UserRepository;
+import com.example.gameserver.model.ErrorMessage;
 import com.example.gameserver.model.db.Session;
 import com.example.gameserver.model.db.User;
 import com.example.gameserver.model.rest.UserRequest;
@@ -31,7 +32,7 @@ public class UsersController {
     public ResponseEntity<?> addUser(@RequestBody @Valid UserRequest request){
         if(this.userRepository.existsByUsername(request.getUsername()))
         {
-            return ServerUtils.createErrorResponse("username", "The username "+ request.getUsername()+" is already exist");
+            return ServerUtils.createErrorResponse("username", ErrorMessage.USERNAME_EXIST, request.getUsername());
         }
         User user = this.userRepository.save(User.createFromUserRequest(request));
         Session session = this.sessionRepository.save(new Session(user.getId()));
@@ -39,14 +40,14 @@ public class UsersController {
     }
 
     @GetMapping()
-    public ResponseEntity<?> getUser(@RequestBody @Valid UserRequest request){
-        User user = this.userRepository.findByUsername(request.getUsername());
+    public ResponseEntity<?> getUser(@RequestParam("username") String username, @RequestParam("password") String password){
+        User user = this.userRepository.findByUsername(username);
         if(user == null)
         {
-            return ServerUtils.createErrorResponse("username", "The username "+ request.getUsername()+" does not exist");
+            return ServerUtils.createErrorResponse("username", ErrorMessage.USERNAME_NOT_EXIST, username);
         }
-        if(!request.getPassword().equals(user.getPassword())){
-            return ServerUtils.createErrorResponse("password", "Wrong password");
+        if(!password.equals(user.getPassword())){
+            return ServerUtils.createErrorResponse("password", ErrorMessage.WRONG_PASSWORD);
         }
 
         Session session = this.sessionRepository.save(new Session(user.getId()));
