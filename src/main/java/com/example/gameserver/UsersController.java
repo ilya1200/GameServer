@@ -41,7 +41,7 @@ public class UsersController {
     }
 
     @GetMapping()
-    public ResponseEntity<?> getUser(@RequestParam(Constants.USERNAME) String username, @RequestParam("password") String password){
+    public ResponseEntity<?> getUser(@RequestParam(Constants.USERNAME) String username, @RequestParam(Constants.PASSWORD) String password){
         User user = this.userRepository.findByUsername(username);
         if(user == null)
         {
