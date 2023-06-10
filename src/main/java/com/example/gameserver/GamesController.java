@@ -2,23 +2,26 @@ package com.example.gameserver;
 
 import com.example.gameserver.games.Player;
 import com.example.gameserver.games.tiktaktoe.GameException;
-import com.example.gameserver.jpa.SessionRepository;
 import com.example.gameserver.jpa.UserRepository;
 import com.example.gameserver.model.ErrorMessage;
 import com.example.gameserver.model.Game;
 import com.example.gameserver.model.db.User;
-import com.example.gameserver.model.rest.GameResponse;
 import com.example.gameserver.model.rest.GameRequest;
+import com.example.gameserver.model.rest.GameResponse;
 import com.example.gameserver.model.rest.MoveRequest;
 import com.example.gameserver.utils.Constants;
 import com.example.gameserver.utils.ServerUtils;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.Utilities;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController()
@@ -26,18 +29,16 @@ import java.util.stream.Collectors;
 public class GamesController {
     private Map<UUID,Game> games = new HashMap<UUID, Game>();
     private final UserRepository userRepository;
-    private final SessionRepository sessionRepository;
 
-    public GamesController(UserRepository userRepository, SessionRepository sessionRepository) {
+    public GamesController(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.sessionRepository = sessionRepository;
     }
 
     @PostMapping()
-    public ResponseEntity<?> addGame(@RequestBody @Valid GameRequest request, @RequestHeader("session") String sessionId){
-        User user = this.userRepository.getUserBySessionId(UUID.fromString(sessionId));
+    public ResponseEntity<?> createGame(@RequestBody @Valid GameRequest request, @RequestParam(Constants.USERNAME) String username){
+        User user = this.userRepository.findByUsername(username);
         if(user==null){
-            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.NO_SESSION_ID,  sessionId);
+            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.USERNAME_NOT_EXIST);
         }
         Game game = new Game(request.getGameType(), user);
         games.put(game.getId(), game);
@@ -46,10 +47,10 @@ public class GamesController {
     }
 
     @GetMapping()
-    public ResponseEntity<?> getJoinableGames(@RequestHeader("session") String sessionId){
-        User user = this.userRepository.getUserBySessionId(UUID.fromString(sessionId));
+    public ResponseEntity<?> getJoinableGames(@RequestParam(Constants.USERNAME) String username){
+        User user = this.userRepository.findByUsername(username);
         if(user==null){
-            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.NO_SESSION_ID,  sessionId);
+            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.USERNAME_NOT_EXIST);
         }
         List<GameResponse> joinableGames = games.entrySet().stream()
                 .filter(g -> !g.getValue().isActiveGame() && !g.getValue().isFirstUser(user))
@@ -60,17 +61,17 @@ public class GamesController {
     }
 
     @PatchMapping("/{gameId}")
-    public ResponseEntity<?> joinGame(@RequestHeader("session") String sessionId, @PathVariable UUID gameId){
-        User user = this.userRepository.getUserBySessionId(UUID.fromString(sessionId));
+    public ResponseEntity<?> joinGame(@RequestParam(Constants.USERNAME) String username, @PathVariable UUID gameId){
+        User user = this.userRepository.findByUsername(username);
         if(user==null){
-            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.NO_SESSION_ID,  sessionId);
+            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.USERNAME_NOT_EXIST);
         }
         Game game = games.get(gameId);
         if (game == null){
             return ServerUtils.createErrorResponse(Constants.GAME_ID, ErrorMessage.INVALID_GAME_ID, gameId);
         }
-        if (game.isFirstUser(user)){
-            return ServerUtils.createErrorResponse("session", ErrorMessage.USER_ALREADY_IN_GAME, sessionId);
+        if (game.isFirstUser(user) || game.isSecondUser(user)){
+            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.USER_ALREADY_IN_GAME, user.getUsername());
         }
         game.setUserSecond(user);
 
@@ -78,10 +79,10 @@ public class GamesController {
     }
 
     @PostMapping("/{gameId}")
-    public ResponseEntity<?> makeMove(@RequestHeader("session") String sessionId, @PathVariable UUID gameId, @RequestBody MoveRequest moveRequest){
-        User user = this.userRepository.getUserBySessionId(UUID.fromString(sessionId));
+    public ResponseEntity<?> makeMove(@RequestParam(Constants.USERNAME) String username, @PathVariable UUID gameId, @RequestBody MoveRequest moveRequest){
+        User user = this.userRepository.findByUsername(username);
         if(user==null){
-            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.NO_SESSION_ID,  sessionId);
+            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.USERNAME_NOT_EXIST);
         }
         Game game = games.get(gameId);
         if (game == null){
@@ -101,7 +102,7 @@ public class GamesController {
         try {
             game.getBoard().makeMove(moveRequest.getMove(), player);
         }catch (GameException gameException){
-            ServerUtils.createErrorResponse(Constants.MOVE, gameException.getErrorMessage());
+            return ServerUtils.createErrorResponse(Constants.MOVE, gameException.getErrorMessage());
         }
 
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -109,10 +110,10 @@ public class GamesController {
 
 
     @GetMapping("/{gameId}")
-    public ResponseEntity<?> getUpdates(@RequestHeader("session") String sessionId, @PathVariable UUID gameId){
-        User user = this.userRepository.getUserBySessionId(UUID.fromString(sessionId));
+    public ResponseEntity<?> getUpdates(@RequestParam(Constants.USERNAME) String username, @PathVariable UUID gameId){
+        User user = this.userRepository.findByUsername(username);
         if(user==null){
-            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.NO_SESSION_ID,  sessionId);
+            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.USERNAME_NOT_EXIST);
         }
         Game game = games.get(gameId);
         if (game == null){
@@ -125,6 +126,4 @@ public class GamesController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
-
-
 }

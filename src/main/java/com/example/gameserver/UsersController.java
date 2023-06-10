@@ -1,9 +1,7 @@
 package com.example.gameserver;
 
-import com.example.gameserver.jpa.SessionRepository;
 import com.example.gameserver.jpa.UserRepository;
 import com.example.gameserver.model.ErrorMessage;
-import com.example.gameserver.model.db.Session;
 import com.example.gameserver.model.db.User;
 import com.example.gameserver.model.rest.UserRequest;
 import com.example.gameserver.utils.Constants;
