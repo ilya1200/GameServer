@@ -6,6 +6,7 @@ import com.example.gameserver.model.ErrorMessage;
 import com.example.gameserver.model.db.Session;
 import com.example.gameserver.model.db.User;
 import com.example.gameserver.model.rest.UserRequest;
+import com.example.gameserver.utils.Constants;
 import com.example.gameserver.utils.ServerUtils;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,7 @@ public class UsersController {
     public ResponseEntity<?> addUser(@RequestBody @Valid UserRequest request){
         if(this.userRepository.existsByUsername(request.getUsername()))
         {
-            return ServerUtils.createErrorResponse("username", ErrorMessage.USERNAME_EXIST, request.getUsername());
+            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.USERNAME_EXIST, request.getUsername());
         }
         User user = this.userRepository.save(User.createFromUserRequest(request));
         Session session = this.sessionRepository.save(new Session(user.getId()));
@@ -40,14 +41,14 @@ public class UsersController {
     }
 
     @GetMapping()
-    public ResponseEntity<?> getUser(@RequestParam("username") String username, @RequestParam("password") String password){
+    public ResponseEntity<?> getUser(@RequestParam(Constants.USERNAME) String username, @RequestParam("password") String password){
         User user = this.userRepository.findByUsername(username);
         if(user == null)
         {
-            return ServerUtils.createErrorResponse("username", ErrorMessage.USERNAME_NOT_EXIST, username);
+            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.USERNAME_NOT_EXIST, username);
         }
         if(!password.equals(user.getPassword())){
-            return ServerUtils.createErrorResponse("password", ErrorMessage.WRONG_PASSWORD);
+            return ServerUtils.createErrorResponse(Constants.PASSWORD, ErrorMessage.WRONG_PASSWORD);
         }
 
         Session session = this.sessionRepository.save(new Session(user.getId()));

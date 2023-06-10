@@ -10,6 +10,7 @@ import com.example.gameserver.model.db.User;
 import com.example.gameserver.model.rest.GameResponse;
 import com.example.gameserver.model.rest.GameRequest;
 import com.example.gameserver.model.rest.MoveRequest;
+import com.example.gameserver.utils.Constants;
 import com.example.gameserver.utils.ServerUtils;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -36,7 +37,7 @@ public class GamesController {
     public ResponseEntity<?> addGame(@RequestBody @Valid GameRequest request, @RequestHeader("session") String sessionId){
         User user = this.userRepository.getUserBySessionId(UUID.fromString(sessionId));
         if(user==null){
-            return ServerUtils.createErrorResponse("username", ErrorMessage.NO_SESSION_ID,  sessionId);
+            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.NO_SESSION_ID,  sessionId);
         }
         Game game = new Game(request.getGameType(), user);
         games.put(game.getId(), game);
@@ -48,7 +49,7 @@ public class GamesController {
     public ResponseEntity<?> getJoinableGames(@RequestHeader("session") String sessionId){
         User user = this.userRepository.getUserBySessionId(UUID.fromString(sessionId));
         if(user==null){
-            return ServerUtils.createErrorResponse("username", ErrorMessage.NO_SESSION_ID,  sessionId);
+            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.NO_SESSION_ID,  sessionId);
         }
         List<GameResponse> joinableGames = games.entrySet().stream()
                 .filter(g -> !g.getValue().isActiveGame() && !g.getValue().isFirstUser(user))
@@ -62,11 +63,11 @@ public class GamesController {
     public ResponseEntity<?> joinGame(@RequestHeader("session") String sessionId, @PathVariable UUID gameId){
         User user = this.userRepository.getUserBySessionId(UUID.fromString(sessionId));
         if(user==null){
-            return ServerUtils.createErrorResponse("username", ErrorMessage.NO_SESSION_ID,  sessionId);
+            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.NO_SESSION_ID,  sessionId);
         }
         Game game = games.get(gameId);
         if (game == null){
-            return ServerUtils.createErrorResponse("gameId", ErrorMessage.INVALID_GAME_ID, gameId);
+            return ServerUtils.createErrorResponse(Constants.GAME_ID, ErrorMessage.INVALID_GAME_ID, gameId);
         }
         if (game.isFirstUser(user)){
             return ServerUtils.createErrorResponse("session", ErrorMessage.USER_ALREADY_IN_GAME, sessionId);
@@ -80,11 +81,11 @@ public class GamesController {
     public ResponseEntity<?> makeMove(@RequestHeader("session") String sessionId, @PathVariable UUID gameId, @RequestBody MoveRequest moveRequest){
         User user = this.userRepository.getUserBySessionId(UUID.fromString(sessionId));
         if(user==null){
-            return ServerUtils.createErrorResponse("username", ErrorMessage.NO_SESSION_ID,  sessionId);
+            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.NO_SESSION_ID,  sessionId);
         }
         Game game = games.get(gameId);
         if (game == null){
-            return ServerUtils.createErrorResponse("gameId", ErrorMessage.INVALID_GAME_ID, gameId);
+            return ServerUtils.createErrorResponse(Constants.GAME_ID, ErrorMessage.INVALID_GAME_ID, gameId);
         }
 
         Player player;
@@ -100,7 +101,7 @@ public class GamesController {
         try {
             game.getBoard().makeMove(moveRequest.getMove(), player);
         }catch (GameException gameException){
-            ServerUtils.createErrorResponse("move", gameException.getErrorMessage());
+            ServerUtils.createErrorResponse(Constants.MOVE, gameException.getErrorMessage());
         }
 
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -111,11 +112,11 @@ public class GamesController {
     public ResponseEntity<?> getUpdates(@RequestHeader("session") String sessionId, @PathVariable UUID gameId){
         User user = this.userRepository.getUserBySessionId(UUID.fromString(sessionId));
         if(user==null){
-            return ServerUtils.createErrorResponse("username", ErrorMessage.NO_SESSION_ID,  sessionId);
+            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.NO_SESSION_ID,  sessionId);
         }
         Game game = games.get(gameId);
         if (game == null){
-            return ServerUtils.createErrorResponse("gameId", ErrorMessage.INVALID_GAME_ID, gameId);
+            return ServerUtils.createErrorResponse(Constants.GAME_ID, ErrorMessage.INVALID_GAME_ID, gameId);
         }
 
         if (user.equals(game.getUserFirst()) || user.equals(game.getUserSecond())){
