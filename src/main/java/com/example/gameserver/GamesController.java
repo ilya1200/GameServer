@@ -12,8 +12,6 @@ import com.example.gameserver.model.rest.MoveRequest;
 import com.example.gameserver.utils.Constants;
 import com.example.gameserver.utils.ServerUtils;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -110,7 +108,7 @@ public class GamesController {
 
 
     @GetMapping("/{gameId}")
-    public ResponseEntity<?> getUpdates(@RequestParam(Constants.USERNAME) String username, @PathVariable UUID gameId){
+    public ResponseEntity<?> getGameUpdates(@RequestParam(Constants.USERNAME) String username, @PathVariable UUID gameId){
         User user = this.userRepository.findByUsername(username);
         if(user==null){
             return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.USERNAME_NOT_EXIST);
