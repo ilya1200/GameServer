@@ -6,7 +6,7 @@ public enum ErrorMessage {
     WRONG_PASSWORD("Wrong password"),
     NO_SESSION_ID("Did not find user by session ID %s"),
     INVALID_GAME_ID("Did not find a game by gameId %s"),
-    USER_ALREADY_IN_GAME("User with this session already in the game %s"),
+    USER_ALREADY_IN_GAME("User %s already in the game."),
     ILLEGAL_MOVE("Illegal move"),
     GAME_OVER("The game is over"),
 

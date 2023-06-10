@@ -54,6 +54,10 @@ public class Game {
         return this.getUserFirst().getId().equals(user.getId());
     }
 
+    public boolean isSecondUser(User user){
+        return this.getUserSecond().getId().equals(user.getId());
+    }
+
     public Board getBoard() {
         return board;
     }

@@ -1,11 +1,10 @@
 package com.example.gameserver;
 
-import com.example.gameserver.jpa.SessionRepository;
 import com.example.gameserver.jpa.UserRepository;
 import com.example.gameserver.model.ErrorMessage;
-import com.example.gameserver.model.db.Session;
 import com.example.gameserver.model.db.User;
 import com.example.gameserver.model.rest.UserRequest;
+import com.example.gameserver.utils.Constants;
 import com.example.gameserver.utils.ServerUtils;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -21,37 +20,33 @@ import java.util.Map;
 @RequestMapping("/users")
 public class UsersController {
     private final UserRepository userRepository;
-    private final SessionRepository sessionRepository;
 
-    public UsersController(UserRepository userRepository, SessionRepository sessionRepository) {
+    public UsersController(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.sessionRepository = sessionRepository;
     }
 
     @PostMapping()
-    public ResponseEntity<?> addUser(@RequestBody @Valid UserRequest request){
+    public ResponseEntity<?> signUp(@RequestBody @Valid UserRequest request){
         if(this.userRepository.existsByUsername(request.getUsername()))
         {
-            return ServerUtils.createErrorResponse("username", ErrorMessage.USERNAME_EXIST, request.getUsername());
+            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.USERNAME_EXIST, request.getUsername());
         }
-        User user = this.userRepository.save(User.createFromUserRequest(request));
-        Session session = this.sessionRepository.save(new Session(user.getId()));
-        return ResponseEntity.noContent().header("session", session.getId().toString()).build();
+        this.userRepository.save(User.createFromUserRequest(request));
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping()
-    public ResponseEntity<?> getUser(@RequestParam("username") String username, @RequestParam("password") String password){
+    public ResponseEntity<?> logIn(@RequestParam(Constants.USERNAME) String username, @RequestParam(Constants.PASSWORD) String password){
         User user = this.userRepository.findByUsername(username);
         if(user == null)
         {
-            return ServerUtils.createErrorResponse("username", ErrorMessage.USERNAME_NOT_EXIST, username);
+            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.USERNAME_NOT_EXIST, username);
         }
         if(!password.equals(user.getPassword())){
-            return ServerUtils.createErrorResponse("password", ErrorMessage.WRONG_PASSWORD);
+            return ServerUtils.createErrorResponse(Constants.PASSWORD, ErrorMessage.WRONG_PASSWORD);
         }
 
-        Session session = this.sessionRepository.save(new Session(user.getId()));
-        return ResponseEntity.noContent().header("session", session.getId().toString()).build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
