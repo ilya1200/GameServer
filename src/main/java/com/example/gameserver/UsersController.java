@@ -22,26 +22,23 @@ import java.util.Map;
 @RequestMapping("/users")
 public class UsersController {
     private final UserRepository userRepository;
-    private final SessionRepository sessionRepository;
 
-    public UsersController(UserRepository userRepository, SessionRepository sessionRepository) {
+    public UsersController(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.sessionRepository = sessionRepository;
     }
 
     @PostMapping()
-    public ResponseEntity<?> addUser(@RequestBody @Valid UserRequest request){
+    public ResponseEntity<?> signUp(@RequestBody @Valid UserRequest request){
         if(this.userRepository.existsByUsername(request.getUsername()))
         {
             return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.USERNAME_EXIST, request.getUsername());
         }
-        User user = this.userRepository.save(User.createFromUserRequest(request));
-        Session session = this.sessionRepository.save(new Session(user.getId()));
-        return ResponseEntity.noContent().header("session", session.getId().toString()).build();
+        this.userRepository.save(User.createFromUserRequest(request));
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping()
-    public ResponseEntity<?> getUser(@RequestParam(Constants.USERNAME) String username, @RequestParam(Constants.PASSWORD) String password){
+    public ResponseEntity<?> logIn(@RequestParam(Constants.USERNAME) String username, @RequestParam(Constants.PASSWORD) String password){
         User user = this.userRepository.findByUsername(username);
         if(user == null)
         {
@@ -51,8 +48,7 @@ public class UsersController {
             return ServerUtils.createErrorResponse(Constants.PASSWORD, ErrorMessage.WRONG_PASSWORD);
         }
 
-        Session session = this.sessionRepository.save(new Session(user.getId()));
-        return ResponseEntity.noContent().header("session", session.getId().toString()).build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
