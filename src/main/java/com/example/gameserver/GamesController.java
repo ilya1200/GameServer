@@ -51,7 +51,7 @@ public class GamesController {
             return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.USERNAME_NOT_EXIST);
         }
         List<GameResponse> joinableGames = games.entrySet().stream()
-                .filter(g -> !g.getValue().isActiveGame() && !g.getValue().isFirstUser(user))
+                .filter(g -> !g.getValue().hasUserSecond() && !g.getValue().isFirstUser(user))
                 .map(g -> new GameResponse(g.getValue()))
                 .collect(Collectors.toList());
 
@@ -68,9 +68,17 @@ public class GamesController {
         if (game == null){
             return ServerUtils.createErrorResponse(Constants.GAME_ID, ErrorMessage.INVALID_GAME_ID, gameId);
         }
-        if (game.isFirstUser(user) || game.isSecondUser(user)){
-            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.USER_ALREADY_IN_GAME, user.getUsername());
+
+        if(game.isFirstUser(user)){
+            return ResponseEntity.status(HttpStatus.OK).build();
         }
+        if(game.isSecondUser(user)){
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }
+        if(game.hasUserSecond()){
+            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.GAME_IS_FULL, game.getId());
+        }
+        
         game.setUserSecond(user);
 
         return ResponseEntity.status(HttpStatus.OK).build();

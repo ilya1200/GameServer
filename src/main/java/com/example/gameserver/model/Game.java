@@ -46,7 +46,7 @@ public class Game {
         this.userSecond = userSecond;
     }
 
-    public boolean isActiveGame(){
+    public boolean hasUserSecond(){
         return this.getUserSecond()!=null;
     }
 
@@ -55,7 +55,7 @@ public class Game {
     }
 
     public boolean isSecondUser(User user){
-        return this.getUserSecond().getId().equals(user.getId());
+        return this.hasUserSecond() && this.getUserSecond().getId().equals(user.getId());
     }
 
     public Board getBoard() {

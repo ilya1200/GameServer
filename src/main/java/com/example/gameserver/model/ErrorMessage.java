@@ -9,7 +9,7 @@ public enum ErrorMessage {
     USER_ALREADY_IN_GAME("User %s already in the game."),
     ILLEGAL_MOVE("Illegal move"),
     GAME_OVER("The game is over"),
-
+    GAME_IS_FULL("Game is full")
     ;
 
 
