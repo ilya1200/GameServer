@@ -11,6 +11,9 @@ public class GameResponse {
     private final UUID id;
     private final GameType type;
     private final String userFirstName;
+
+    private final String userSecondName;
+
     private final long creationDate;
     private final Move lastMove;
 
@@ -18,6 +21,7 @@ public class GameResponse {
         this.id = game.getId();
         this.type = game.getType();
         this.userFirstName = game.getUserFirst().getUsername();
+        this.userSecondName = game.hasUserSecond()? game.getUserSecond().getUsername(): null;
         this.creationDate = game.getCreationDate();
         this.lastMove = game.getBoard().getLastMove();
     }
@@ -32,6 +36,10 @@ public class GameResponse {
 
     public String getUserFirstName() {
         return userFirstName;
+    }
+
+    public String getUserSecondName() {
+        return userSecondName;
     }
 
     public long getCreationDate() {
