@@ -1,11 +1,13 @@
 package com.example.gameserver;
 
+import com.example.gameserver.games.GameStatus;
 import com.example.gameserver.games.Player;
 import com.example.gameserver.games.tiktaktoe.GameException;
 import com.example.gameserver.jpa.UserRepository;
 import com.example.gameserver.model.ErrorMessage;
 import com.example.gameserver.model.Game;
 import com.example.gameserver.model.db.User;
+import com.example.gameserver.model.rest.GamePatchAction;
 import com.example.gameserver.model.rest.GameRequest;
 import com.example.gameserver.model.rest.GameResponse;
 import com.example.gameserver.model.rest.MoveRequest;
@@ -58,9 +60,13 @@ public class GamesController {
         return ResponseEntity.status(HttpStatus.OK).body(joinableGames);
     }
 
+
     @PatchMapping("/{gameId}")
-    public ResponseEntity<?> joinGame(@RequestParam(Constants.USERNAME) String username, @PathVariable UUID gameId){
-        User user = this.userRepository.findByUsername(username);
+    public ResponseEntity<?> changeGame(@RequestParam(Constants.USERNAME) String username,
+                                        @RequestParam(Constants.PASSWORD) String password,
+                                        @RequestParam(Constants.PATCH_ACTION) GamePatchAction action,
+                                        @PathVariable UUID gameId){
+        User user = this.userRepository.findByUsernameAndPassword(username, password);
         if(user==null){
             return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.USERNAME_NOT_EXIST);
         }
@@ -69,6 +75,34 @@ public class GamesController {
             return ServerUtils.createErrorResponse(Constants.GAME_ID, ErrorMessage.INVALID_GAME_ID, gameId);
         }
 
+        if(game.getGameStatus().isFinished()){
+            return ServerUtils.createErrorResponse(Constants.GAME_ID, ErrorMessage.GAME_OVER);
+        }
+
+        switch (action){
+            case JOIN:
+                return joinGame(user, game);
+            case LEAVE:
+                return leaveGame(user, game);
+            default:
+                throw new RuntimeException("Action unrecognized "+ action);
+        }
+    }
+
+    private ResponseEntity<?> leaveGame(User user, Game game) {
+        if(game.isFirstUser(user)){
+            game.setGameStatus(GameStatus.PLAYER_1_LEFT);
+            return ResponseEntity.status(HttpStatus.OK).build();
+
+        } else if (game.isSecondUser(user)) {
+            game.setGameStatus(GameStatus.PLAYER_2_LEFT);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }else {
+            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.UNAUTHORIZED);
+        }
+    }
+
+    public ResponseEntity joinGame(User user, Game game){
         if(game.isFirstUser(user)){
             return ResponseEntity.status(HttpStatus.OK).build();
         }
@@ -78,13 +112,13 @@ public class GamesController {
         if(game.hasUserSecond()){
             return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.GAME_IS_FULL, game.getId());
         }
-        
+
         game.setUserSecond(user);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @PostMapping("/{gameId}")
+    @PostMapping("/{gameId}/board")
     public ResponseEntity<?> makeMove(@RequestParam(Constants.USERNAME) String username, @PathVariable UUID gameId, @RequestBody MoveRequest moveRequest){
         User user = this.userRepository.findByUsername(username);
         if(user==null){
@@ -133,12 +167,5 @@ public class GamesController {
         }
     }
 
-    @PatchMapping("/{gameId}/quit")
-    public ResponseEntity<?> quitAndDeleteGame(@PathVariable UUID gameId){
-        if (!games.containsKey(gameId)){
-            return ServerUtils.createErrorResponse(Constants.GAME_ID, ErrorMessage.INVALID_GAME_ID, gameId);
-        }
-        games.remove(gameId);
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
+
 }

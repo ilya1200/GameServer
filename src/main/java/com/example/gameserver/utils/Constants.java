@@ -7,4 +7,5 @@ public class Constants {
     public static final String GAME_ID = "gameId";
     public static final String MOVE = "move";
 
+    public static final String PATCH_ACTION = "action";
 }
