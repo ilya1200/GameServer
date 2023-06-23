@@ -132,4 +132,13 @@ public class GamesController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
+
+    @PatchMapping("/{gameId}/quit")
+    public ResponseEntity<?> quitAndDeleteGame(@PathVariable UUID gameId){
+        if (!games.containsKey(gameId)){
+            return ServerUtils.createErrorResponse(Constants.GAME_ID, ErrorMessage.INVALID_GAME_ID, gameId);
+        }
+        games.remove(gameId);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }
