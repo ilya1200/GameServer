@@ -53,7 +53,7 @@ public class GamesController {
             return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.USERNAME_NOT_EXIST);
         }
         List<GameResponse> joinableGames = games.entrySet().stream()
-                .filter(g -> !g.getValue().hasUserSecond() && !g.getValue().isFirstUser(user))
+                .filter(g -> !g.getValue().hasUserSecond() && !g.getValue().isFirstUser(user) && !g.getValue().getGameStatus().isFinished())
                 .map(g -> new GameResponse(g.getValue()))
                 .collect(Collectors.toList());
 
