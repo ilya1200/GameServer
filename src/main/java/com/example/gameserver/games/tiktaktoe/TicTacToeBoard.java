@@ -1,7 +1,7 @@
 package com.example.gameserver.games.tiktaktoe;
 
 import com.example.gameserver.games.Board;
-import com.example.gameserver.games.GameStatus;
+import com.example.gameserver.games.BoardStatus;
 import com.example.gameserver.games.Move;
 import com.example.gameserver.games.Player;
 import com.example.gameserver.model.ErrorMessage;
@@ -68,20 +68,20 @@ public class TicTacToeBoard implements Board{
 
         this.makeMove(player, row, col);
 
-        GameStatus gameStatus;
+        BoardStatus boardStatus;
         if(isWin()){
             isGameFinished = true;
             System.out.println("Player " + (currentPlayer == Player.FIRST ? Player.FIRST : Player.SECOND) + " won!");
-            gameStatus = GameStatus.FINISHED_WIN;
+            boardStatus = BoardStatus.FINISHED_WIN;
         } else if (isDraw()) {
             isGameFinished = true;
             System.out.println("Draw!");
-            gameStatus = GameStatus.FINISHED_DRAW;
+            boardStatus = BoardStatus.FINISHED_DRAW;
         }else{
             switchPlayer();
-            gameStatus = GameStatus.PLAYING;
+            boardStatus = BoardStatus.PLAYING;
         }
-        moves.add(new Move(move, player, gameStatus));
+        moves.add(new Move(move, player, boardStatus));
     }
 
     @Override

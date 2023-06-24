@@ -1,6 +1,7 @@
 package com.example.gameserver.model;
 
 import com.example.gameserver.games.Board;
+import com.example.gameserver.games.GameStatus;
 import com.example.gameserver.model.db.User;
 
 import java.util.UUID;
@@ -8,6 +9,8 @@ import java.util.UUID;
 public class Game {
     private final UUID id;
     private final GameType type;
+
+    private GameStatus gameStatus;
     private final User userFirst;
     private User userSecond;
     private final long creationDate;
@@ -17,6 +20,7 @@ public class Game {
     public Game(GameType type, User userFirst) {
         this.id = UUID.randomUUID();
         this.type = type;
+        this.gameStatus = GameStatus.PLAYING;
         this.userFirst = userFirst;
         this.creationDate = System.currentTimeMillis();
         this.board = type.createBoard();
@@ -28,6 +32,14 @@ public class Game {
 
     public GameType getType() {
         return type;
+    }
+
+    public GameStatus getGameStatus() {
+        return gameStatus;
+    }
+
+    public void setGameStatus(GameStatus gameStatus) {
+        this.gameStatus = gameStatus;
     }
 
     public User getUserFirst() {
