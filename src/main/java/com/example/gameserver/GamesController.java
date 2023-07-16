@@ -7,10 +7,7 @@ import com.example.gameserver.jpa.UserRepository;
 import com.example.gameserver.model.ErrorMessage;
 import com.example.gameserver.model.Game;
 import com.example.gameserver.model.db.User;
-import com.example.gameserver.model.rest.GamePatchAction;
-import com.example.gameserver.model.rest.GameRequest;
-import com.example.gameserver.model.rest.GameResponse;
-import com.example.gameserver.model.rest.MoveRequest;
+import com.example.gameserver.model.rest.*;
 import com.example.gameserver.utils.Constants;
 import com.example.gameserver.utils.ServerUtils;
 import jakarta.validation.Valid;
@@ -52,9 +49,11 @@ public class GamesController {
         if(user==null){
             return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.USERNAME_NOT_EXIST);
         }
-        List<GameResponse> joinableGames = games.entrySet().stream()
-                .filter(g -> !g.getValue().hasUserSecond() && !g.getValue().isFirstUser(user) && !g.getValue().getGameStatus().isFinished())
-                .map(g -> new GameResponse(g.getValue()))
+        List<GameItem> joinableGames = games.entrySet().stream()
+                .filter(g -> !g.getValue().hasUserSecond() &&
+                        !g.getValue().isFirstUser(user) &&
+                        !g.getValue().getGameStatus().isFinished())
+                .map(g -> new GameItem(g.getValue()))
                 .collect(Collectors.toList());
 
         return ResponseEntity.status(HttpStatus.OK).body(joinableGames);
