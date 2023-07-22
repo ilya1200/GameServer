@@ -1,11 +1,11 @@
-package com.example.gameserver.model.rest;
+package com.example.gameserver.model.rest.game_item;
 
-import com.example.gameserver.model.Game;
-import com.example.gameserver.model.GameType;
+import com.example.gameserver.games.Game;
+import com.example.gameserver.games.GameType;
 
 import java.util.UUID;
 
-public class GameItem {
+public class GameItemResponse {
     private final UUID id;
     private final GameType type;
     private final String userFirstName;
@@ -22,7 +22,7 @@ public class GameItem {
         return userFirstName;
     }
 
-    public GameItem(Game game){
+    public GameItemResponse(Game game) {
         this.id = game.getId();
         this.type = game.getType();
         this.userFirstName = game.getUserFirst().getUsername();

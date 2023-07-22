@@ -1,7 +1,5 @@
 package com.example.gameserver.games.checkers;
 
-import java.awt.*;
-
 public class Piece {
     private final Color color;
     private final Board board;
@@ -17,11 +15,11 @@ public class Piece {
         return color;
     }
 
-    public boolean makeMove(Position target){
+    public boolean makeMove(Position target) {
         return true;
     }
 
-    public boolean checkColor(Color color){
+    public boolean checkColor(Color color) {
         return color != null && color == this.color;
     }
 
@@ -56,11 +54,7 @@ public class Piece {
             return false;
         }
 
-        if (piece.checkColor(Color.BLACK) && toRow >= fromRow) {
-            return false;
-        }
-
-        return true;
+        return !piece.checkColor(Color.BLACK) || toRow < fromRow;
     }
 
     private boolean isValidJump(Position jump, Position target) {

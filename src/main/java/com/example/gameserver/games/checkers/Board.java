@@ -9,7 +9,7 @@ import java.util.List;
 public class Board {
     public final static int BOARD_SIZE = 8;
     private final Piece[][] pieces = new Piece[8][8];
-    private boolean isWhiteTurn = true;
+    private final boolean isWhiteTurn = true;
 
     public Board() {
         // WHITE
@@ -41,54 +41,54 @@ public class Board {
         pieces[7][7] = new Piece(Color.BLACK, this, new Position(7, 7));
     }
 
-    public int move(String nextMove, Color color){
+    public int move(String nextMove, Color color) {
         Pair<Position, Position> positionPair = this.parseMove(nextMove);
         Position source = positionPair.getFirst();
         Position target = positionPair.getSecond();
         Piece piece = pieces[source.getRow()][source.getCol()];
-        if (piece == null){
-            throw new IllegalArgumentException(String.format("Cell [%d][%d] is empty.", source.getRow(),source.getCol()));
+        if (piece == null) {
+            throw new IllegalArgumentException(String.format("Cell [%d][%d] is empty.", source.getRow(), source.getCol()));
         }
-        if(piece.makeMove(target)){
+        if (piece.makeMove(target)) {
 //            pieces[source.getRow()][source.getCol()] =
         }
         return -1; // Placeholder
     }
 
-    private Pair<Position, Position> parseMove(String move){
+    private Pair<Position, Position> parseMove(String move) {
         final String PATTERN = "^[a-h][1-8][a-h][1-8]$";
 
-        if (move == null || !move.matches(PATTERN)){
-            throw new IllegalStateException(String.format("Expected move to match the pattern: %s, but actual: %s",PATTERN, move));
+        if (move == null || !move.matches(PATTERN)) {
+            throw new IllegalStateException(String.format("Expected move to match the pattern: %s, but actual: %s", PATTERN, move));
         }
 
-        final int SOURCE_COL = move.charAt(0)-'a';
-        final int SOURCE_ROW = move.charAt(1)-'1';
-        final int TARGET_COL = move.charAt(2)-'a';
-        final int TARGET_ROW = move.charAt(3)-'1';
+        final int SOURCE_COL = move.charAt(0) - 'a';
+        final int SOURCE_ROW = move.charAt(1) - '1';
+        final int TARGET_COL = move.charAt(2) - 'a';
+        final int TARGET_ROW = move.charAt(3) - '1';
 
         Position sourcePosition = new Position(SOURCE_ROW, SOURCE_COL);
         Position targetPosition = new Position(TARGET_ROW, TARGET_COL);
         return Pair.of(sourcePosition, targetPosition);
     }
 
-    private boolean isPieceOfCurrentPlayer(Piece piece){
-        if(isWhiteTurn){
+    private boolean isPieceOfCurrentPlayer(Piece piece) {
+        if (isWhiteTurn) {
             return piece.getColor() == Color.WHITE;
-        }else{
+        } else {
             return piece.getColor() == Color.BLACK;
         }
     }
+
     private List<List<Position>> suggestValidMoves() {
 
         List<List<Position>> validMoves = new ArrayList<>();
 
         for (int row = 0; row < BOARD_SIZE; row++) {
             for (int col = 0; col < BOARD_SIZE; col++) {
-                if (pieces[row][col] == null || !isPieceOfCurrentPlayer(pieces[row][col])){
+                if (pieces[row][col] == null || !isPieceOfCurrentPlayer(pieces[row][col])) {
                     continue;
                 }
-
 
 
                 // Check diagonal moves to the right
@@ -117,8 +117,8 @@ public class Board {
         return validMoves;
     }
 
-    public Piece getPiece(Position position){
-        if (this.pieces[position.getRow()][position.getCol()] == null){
+    public Piece getPiece(Position position) {
+        if (this.pieces[position.getRow()][position.getCol()] == null) {
             return null;
         }
         return this.pieces[position.getRow()][position.getCol()];

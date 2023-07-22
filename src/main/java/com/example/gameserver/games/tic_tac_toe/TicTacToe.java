@@ -1,0 +1,104 @@
+package com.example.gameserver.games.tic_tac_toe;
+
+import com.example.gameserver.games.*;
+import com.example.gameserver.model.db.User;
+import com.example.gameserver.utils.ErrorMessage;
+
+import java.util.UUID;
+
+public class TicTacToe implements Game {
+    private final UUID id;
+    private final GameType type;
+    private final User userFirst;
+    private final Board board;
+    private GameStatus gameStatus;
+    private User userSecond;
+
+    public void setCurrentTurn(User currentTurn) {
+        this.currentTurn = currentTurn;
+    }
+
+    private User currentTurn;
+
+    private Player currentPlayer;
+
+    public TicTacToe(GameType type, User userFirst) {
+        this.userFirst = userFirst;
+        this.board = new TicTacToeBoard();
+        this.id = UUID.randomUUID();
+        this.type = type;
+        this.gameStatus = GameStatus.WAITING_TO_START;
+        this.currentTurn = userFirst;
+        this.currentPlayer = Player.FIRST;//todo solve duplication
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public GameType getType() {
+        return type;
+    }
+
+    public GameStatus getGameStatus() {
+        return gameStatus;
+    }
+
+    public void setGameStatus(GameStatus gameStatus) {
+        this.gameStatus = gameStatus;
+    }
+
+    public User getUserFirst() {
+        return userFirst;
+    }
+
+    public User getUserSecond() {
+        return userSecond;
+    }
+
+    public void setUserSecond(User userSecond) {
+        this.userSecond = userSecond;
+    }
+
+    public boolean hasUserSecond() {
+        return this.getUserSecond() != null;
+    }
+
+    public boolean isFirstUser(User user) {
+        return this.getUserFirst().getId().equals(user.getId());
+    }
+
+    public boolean isSecondUser(User user) {
+        return this.hasUserSecond() && this.getUserSecond().getId().equals(user.getId());
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    private void switchPlayer() {
+        if (currentPlayer == Player.FIRST) {
+            currentPlayer = Player.SECOND;
+        } else {
+            currentPlayer = Player.FIRST;
+        }
+    }
+
+    @Override
+    public void makeMove(String move, Player player) {
+        if (this.gameStatus != GameStatus.PLAYING && player != currentPlayer) {
+            throw new GameException(ErrorMessage.ILLEGAL_MOVE);
+        }
+
+        board.makeMove(move,player);
+        if (board.isWin()) {
+            System.out.println("Player " + (currentTurn.getUsername()) + " won!");
+            gameStatus = GameStatus.WIN;
+        } else if (board.isDraw()) {
+            System.out.println("Draw!");
+            gameStatus = GameStatus.DRAW;
+        } else {
+            switchPlayer();
+        }
+    }
+}

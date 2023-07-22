@@ -1,6 +1,6 @@
 package com.example.gameserver.games.checkers;
 
-public class Position implements  Comparable<Position>{
+public class Position implements Comparable<Position> {
     private int row;
     private int col;
 
@@ -27,10 +27,10 @@ public class Position implements  Comparable<Position>{
 
     @Override
     public int compareTo(Position o) {
-        return o.row == this.row && o.col == this.col?0:-1;
+        return o.row == this.row && o.col == this.col ? 0 : -1;
     }
 
-    public boolean isValid(){
+    public boolean isValid() {
         return this.getRow() < 0 || this.getRow() >= Board.BOARD_SIZE || this.getCol() < 0 || this.getCol() >= Board.BOARD_SIZE;
     }
 }

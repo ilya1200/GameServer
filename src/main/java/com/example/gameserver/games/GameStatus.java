@@ -1,12 +1,12 @@
 package com.example.gameserver.games;
 
 public enum GameStatus {
-    PLAYER_1_LEFT,
-    PLAYER_2_LEFT,
+    WAITING_TO_START,
     PLAYING,
-    ;
+    WIN,
+    DRAW;
 
-    public boolean isFinished(){
-        return this != PLAYING;
+    public boolean isFinished() {
+        return this==WIN && this == DRAW ;
     }
 }

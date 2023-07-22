@@ -1,6 +1,6 @@
 package com.example.gameserver.model.db;
 
-import com.example.gameserver.model.rest.UserRequest;
+import com.example.gameserver.model.rest.user.UserRequest;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -24,6 +24,13 @@ public class User {
 
     // Getters and setters
 
+    public static User createFromUserRequest(UserRequest request) {
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPassword(request.getPassword());
+        return user;
+    }
+
     public Long getId() {
         return id;
     }
@@ -44,17 +51,10 @@ public class User {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     // Other getters and setters
 
-    public static User createFromUserRequest(UserRequest request){
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
-        return user;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

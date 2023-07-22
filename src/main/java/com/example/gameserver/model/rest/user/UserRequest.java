@@ -1,4 +1,4 @@
-package com.example.gameserver.model.rest;
+package com.example.gameserver.model.rest.user;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
