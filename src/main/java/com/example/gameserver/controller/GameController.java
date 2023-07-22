@@ -77,7 +77,7 @@ public class GameController {
             return ServerUtils.createErrorResponse(Constants.MOVE, gameException.getErrorMessage());
         }
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.OK).body(new GameResponse(game));
     }
 
 
