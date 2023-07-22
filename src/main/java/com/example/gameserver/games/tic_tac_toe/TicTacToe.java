@@ -93,7 +93,7 @@ public class TicTacToe implements Game {
         board.makeMove(move,player);
         if (board.isWin()) {
             System.out.println("Player " + (currentTurn.getUsername()) + " won!");
-            gameStatus = GameStatus.WIN;
+            gameStatus = player==Player.FIRST?GameStatus.PLAYER_1_WIN:GameStatus.PLAYER_2_WIN;
         } else if (board.isDraw()) {
             System.out.println("Draw!");
             gameStatus = GameStatus.DRAW;
