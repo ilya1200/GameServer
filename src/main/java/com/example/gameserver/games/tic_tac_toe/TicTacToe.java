@@ -72,8 +72,12 @@ public class TicTacToe implements Game {
         return this.hasUserSecond() && this.getUserSecond().getId().equals(user.getId());
     }
 
-    public Board getBoard() {
-        return board;
+    public Player[][] getBoard() {
+        return board.getBoard();
+    }
+
+    public int getBoardSize(){
+        return board.getBoardSize();
     }
 
     private void switchPlayer() {

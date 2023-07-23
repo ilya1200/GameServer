@@ -6,4 +6,8 @@ public interface Board {
     boolean isWin();
 
     boolean isDraw();
+
+    Player[][] getBoard();
+
+    int getBoardSize();
 }

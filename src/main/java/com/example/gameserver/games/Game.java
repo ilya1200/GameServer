@@ -25,7 +25,9 @@ public interface Game {
 
     boolean isSecondUser(User user);
 
-    Board getBoard();
+    Player[][] getBoard();
+
+    int getBoardSize();
 
     void makeMove(String move, Player player);
 

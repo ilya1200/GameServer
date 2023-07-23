@@ -13,7 +13,7 @@ public class GameResponse {
     private final GameStatus gameStatus;
     private final String userFirstName;
     private final String userSecondName;
-    private final Board board;
+    private final BoardResponse board;
 
     public GameResponse(Game game) {
         this.id = game.getId();
@@ -21,7 +21,7 @@ public class GameResponse {
         this.gameStatus = game.getGameStatus();
         this.userFirstName = game.getUserFirst().getUsername();
         this.userSecondName = game.hasUserSecond() ? game.getUserSecond().getUsername() : null;
-        this.board = game.getBoard();
+        this.board = new BoardResponse(game.getBoard(),game.getBoardSize());
     }
 
     public UUID getId() {
@@ -42,5 +42,5 @@ public class GameResponse {
         return userSecondName;
     }
 
-    public Board getBoard() { return board; }
+    public BoardResponse getBoard() { return board; }
 }

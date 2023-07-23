@@ -38,13 +38,6 @@ public class TicTacToeBoard implements Board {
         int row = position.getFirst();
         int col = position.getSecond();
 
-        /*if (isGameFinished) {
-            throw new GameException(ErrorMessage.GAME_OVER);
-        }
-        if (player != currentPlayer) {
-            throw new GameException(ErrorMessage.ILLEGAL_MOVE);
-        }*/
-
         if (!isValidMove(row, col)) {
             throw new GameException(ErrorMessage.ILLEGAL_MOVE);
         }
@@ -116,5 +109,15 @@ public class TicTacToeBoard implements Board {
 
         // All cells are filled, and there is no win, it's a draw
         return true;
+    }
+
+    @Override
+    public Player[][] getBoard() {
+        return cell;
+    }
+
+    @Override
+    public int getBoardSize() {
+        return BOARD_SIZE;
     }
 }
