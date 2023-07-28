@@ -10,7 +10,7 @@ public class GameResponse {
     private final GameStatus gameStatus;
     private final String userFirstName;
     private final String userSecondName;
-    private final BoardResponse board;
+    private final Player[][] board;
     private final Player currentPlayer;
 
     public GameResponse(Game game) {
@@ -19,7 +19,7 @@ public class GameResponse {
         this.gameStatus = game.getGameStatus();
         this.userFirstName = game.getUserFirst().getUsername();
         this.userSecondName = game.hasUserSecond() ? game.getUserSecond().getUsername() : null;
-        this.board = new BoardResponse(game.getBoard(),game.getBoardSize());
+        this.board = game.getBoard();
         this.currentPlayer = game.getCurrentPlayer();
     }
 
@@ -41,7 +41,7 @@ public class GameResponse {
         return userSecondName;
     }
 
-    public BoardResponse getBoard() { return board; }
+    public Player[][] getBoard() { return board; }
 
     public Player getCurrentPlayer() {return this.currentPlayer;}
 }
