@@ -29,11 +29,9 @@ public class GameController {
 
     public static ResponseEntity<?> leaveGame(User user, Game game) {
         if (game.isFirstUser(user)) {
-            game.setCurrentTurn(game.getUserSecond());
             game.setGameStatus(GameStatus.PLAYER_1_LEFT);
             return ResponseEntity.status(HttpStatus.OK).build();
         } else if (game.isSecondUser(user)) {
-            game.setCurrentTurn(game.getUserFirst());
             game.setGameStatus(GameStatus.PLAYER_2_LEFT);
             return ResponseEntity.status(HttpStatus.OK).build();
         } else {

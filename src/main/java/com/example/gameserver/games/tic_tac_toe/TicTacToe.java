@@ -13,13 +13,6 @@ public class TicTacToe implements Game {
     private final Board board;
     private GameStatus gameStatus;
     private User userSecond;
-
-    public void setCurrentTurn(User currentTurn) {
-        this.currentTurn = currentTurn;
-    }
-
-    private User currentTurn;
-
     private Player currentPlayer;
 
     public TicTacToe(GameType type, User userFirst) {
@@ -28,8 +21,7 @@ public class TicTacToe implements Game {
         this.id = UUID.randomUUID();
         this.type = type;
         this.gameStatus = GameStatus.WAITING_TO_START;
-        this.currentTurn = userFirst;
-        this.currentPlayer = Player.FIRST;//todo solve duplication
+        this.currentPlayer = Player.FIRST;
     }
 
     public UUID getId() {
@@ -96,7 +88,6 @@ public class TicTacToe implements Game {
 
         board.makeMove(move,player);
         if (board.isWin()) {
-            System.out.println("Player " + (currentTurn.getUsername()) + " won!");
             gameStatus = player==Player.FIRST?GameStatus.PLAYER_1_WIN:GameStatus.PLAYER_2_WIN;
         } else if (board.isDraw()) {
             System.out.println("Draw!");
@@ -104,5 +95,10 @@ public class TicTacToe implements Game {
         } else {
             switchPlayer();
         }
+    }
+
+    @Override
+    public Player getCurrentPlayer() {
+        return this.currentPlayer;
     }
 }

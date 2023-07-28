@@ -31,6 +31,5 @@ public interface Game {
 
     void makeMove(String move, Player player);
 
-    void setCurrentTurn(User user);
-
+    Player getCurrentPlayer();
 }

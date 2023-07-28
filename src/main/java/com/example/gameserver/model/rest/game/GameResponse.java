@@ -1,9 +1,6 @@
 package com.example.gameserver.model.rest.game;
 
-import com.example.gameserver.games.Board;
-import com.example.gameserver.games.Game;
-import com.example.gameserver.games.GameStatus;
-import com.example.gameserver.games.GameType;
+import com.example.gameserver.games.*;
 
 import java.util.UUID;
 
@@ -14,6 +11,7 @@ public class GameResponse {
     private final String userFirstName;
     private final String userSecondName;
     private final BoardResponse board;
+    private final Player currentPlayer;
 
     public GameResponse(Game game) {
         this.id = game.getId();
@@ -22,6 +20,7 @@ public class GameResponse {
         this.userFirstName = game.getUserFirst().getUsername();
         this.userSecondName = game.hasUserSecond() ? game.getUserSecond().getUsername() : null;
         this.board = new BoardResponse(game.getBoard(),game.getBoardSize());
+        this.currentPlayer = game.getCurrentPlayer();
     }
 
     public UUID getId() {
@@ -43,4 +42,6 @@ public class GameResponse {
     }
 
     public BoardResponse getBoard() { return board; }
+
+    public Player getCurrentPlayer() {return this.currentPlayer;}
 }
