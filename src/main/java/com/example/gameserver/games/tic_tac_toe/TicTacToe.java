@@ -82,7 +82,7 @@ public class TicTacToe implements Game {
 
     @Override
     public void makeMove(String move, Player player) {
-        if (this.gameStatus != GameStatus.PLAYING && player != currentPlayer) {
+        if (this.gameStatus != GameStatus.PLAYING || player != currentPlayer) {
             throw new GameException(ErrorMessage.ILLEGAL_MOVE);
         }
 

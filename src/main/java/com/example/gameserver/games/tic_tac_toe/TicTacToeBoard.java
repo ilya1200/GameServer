@@ -6,9 +6,15 @@ import com.example.gameserver.games.Player;
 import com.example.gameserver.utils.ErrorMessage;
 import org.springframework.data.util.Pair;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class TicTacToeBoard implements Board {
     private static final int BOARD_SIZE = 3;
     private final Player[][] cell;
+
+    private final Map<String, Pair<Integer, Integer>> moveMap = new HashMap<>();
+
 
     public TicTacToeBoard() {
         cell = new Player[BOARD_SIZE][BOARD_SIZE];
@@ -17,19 +23,26 @@ public class TicTacToeBoard implements Board {
                 cell[row][col] = null;
             }
         }
+
+        moveMap.put("1", Pair.of(0, 0));
+        moveMap.put("2", Pair.of(0, 1));
+        moveMap.put("3", Pair.of(0, 2));
+        moveMap.put("4", Pair.of(1, 0));
+        moveMap.put("5", Pair.of(1, 1));
+        moveMap.put("6", Pair.of(1, 2));
+        moveMap.put("7", Pair.of(2, 0));
+        moveMap.put("8", Pair.of(2, 1));
+        moveMap.put("9", Pair.of(2, 2));
     }
 
     private Pair<Integer, Integer> parseMove(String move) {
-        final String PATTERN = "[a-c][1-3]";
+        final String PATTERN = "[1-9]";
 
         if (move == null || !move.matches(PATTERN)) {
             throw new IllegalStateException(String.format("Expected move to match the pattern: %s, but actual: %s", PATTERN, move));
         }
 
-        final int COL = move.charAt(0) - 'a';
-        final int ROW = move.charAt(1) - '1';
-
-        return Pair.of(ROW, COL);
+        return moveMap.get(move);
     }
 
     @Override
