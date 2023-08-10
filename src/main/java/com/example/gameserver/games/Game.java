@@ -19,7 +19,13 @@ public interface Game {
 
     void setUserSecond(User userSecond);
 
+    boolean hasUserFirst();
+
     boolean hasUserSecond();
+
+    public void clearFirstUser();
+
+    public void clearSecondUser();
 
     boolean isFirstUser(User user);
 

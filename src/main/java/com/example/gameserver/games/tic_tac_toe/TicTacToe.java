@@ -9,7 +9,7 @@ import java.util.UUID;
 public class TicTacToe implements Game {
     private final UUID id;
     private final GameType type;
-    private final User userFirst;
+    private User userFirst;
     private final Board board;
     private GameStatus gameStatus;
     private User userSecond;
@@ -52,17 +52,25 @@ public class TicTacToe implements Game {
         this.userSecond = userSecond;
     }
 
+    public boolean hasUserFirst() {
+        return this.getUserFirst() != null;
+    }
+
     public boolean hasUserSecond() {
         return this.getUserSecond() != null;
     }
 
     public boolean isFirstUser(User user) {
-        return this.getUserFirst().getId().equals(user.getId());
+        return this.hasUserFirst() && this.getUserFirst().getId().equals(user.getId());
     }
 
     public boolean isSecondUser(User user) {
         return this.hasUserSecond() && this.getUserSecond().getId().equals(user.getId());
     }
+
+    public void clearFirstUser(){ this.userFirst = null; }
+
+    public void clearSecondUser(){ this.userSecond = null; }
 
     public Player[][] getBoard() {
         return board.getBoard();

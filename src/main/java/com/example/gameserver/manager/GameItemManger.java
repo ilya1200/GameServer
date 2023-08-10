@@ -13,6 +13,7 @@ public class GameItemManger {
     public static void addGame(Game game){
         games.put(game.getId(), game);
     }
+    public static void deleteGame(UUID gameId){games.remove(gameId);}
 
     public static Map<UUID, Game> getGames(){
         return games;

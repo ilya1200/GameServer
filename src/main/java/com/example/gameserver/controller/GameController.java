@@ -30,18 +30,28 @@ public class GameController {
     public static ResponseEntity<?> leaveGame(User user, Game game) {
         if (game.isFirstUser(user)) {
             game.setGameStatus(GameStatus.PLAYER_1_LEFT);
-            return ResponseEntity.status(HttpStatus.OK).build();
+            game.clearFirstUser();
         } else if (game.isSecondUser(user)) {
             game.setGameStatus(GameStatus.PLAYER_2_LEFT);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } else {
+            game.clearSecondUser();
+        }else{
             return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.UNAUTHORIZED);
         }
+
+        if(!game.hasUserFirst() && !game.hasUserSecond()){
+            GameItemManger.deleteGame(game.getId());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+
     }
 
     public static ResponseEntity<?> joinGame(User user, Game game) {
         if (game.hasUserSecond()) {
             return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.GAME_IS_FULL, game.getId());
+        }
+        if (game.getGameStatus().isFinished()) {
+            return ServerUtils.createErrorResponse(Constants.GAME_ID, ErrorMessage.GAME_OVER);
         }
         game.setUserSecond(user);
         game.setGameStatus(GameStatus.PLAYING);

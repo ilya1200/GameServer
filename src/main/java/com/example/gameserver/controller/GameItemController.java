@@ -80,9 +80,7 @@ public class GameItemController {
             return ServerUtils.createErrorResponse(Constants.GAME_ID, ErrorMessage.INVALID_GAME_ID, gameId);
         }
 
-        if (game.getGameStatus().isFinished()) {
-            return ServerUtils.createErrorResponse(Constants.GAME_ID, ErrorMessage.GAME_OVER);
-        }
+
 
         return switch (action) {
             case JOIN -> GameController.joinGame(user, game);

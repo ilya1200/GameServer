@@ -17,7 +17,7 @@ public class GameResponse {
         this.id = game.getId();
         this.type = game.getType();
         this.gameStatus = game.getGameStatus();
-        this.userFirstName = game.getUserFirst().getUsername();
+        this.userFirstName = game.hasUserFirst()?game.getUserFirst().getUsername():null;
         this.userSecondName = game.hasUserSecond() ? game.getUserSecond().getUsername() : null;
         this.board = game.getBoard();
         this.currentPlayer = game.getCurrentPlayer();
