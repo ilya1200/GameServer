@@ -2,7 +2,9 @@ package com.example.gameserver.controller;
 
 import com.example.gameserver.jpa.UserRepository;
 import com.example.gameserver.model.db.User;
+import com.example.gameserver.model.rest.game.GameResponse;
 import com.example.gameserver.model.rest.user.UserRequest;
+import com.example.gameserver.model.rest.user.UserScoreResponse;
 import com.example.gameserver.utils.Constants;
 import com.example.gameserver.utils.ErrorMessage;
 import com.example.gameserver.utils.ServerUtils;
@@ -45,6 +47,16 @@ public class UsersController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/score")
+    public ResponseEntity<?> getScore(@RequestParam(Constants.USERNAME) String username) {
+        User user = this.userRepository.findByUsername(username);
+        if (user == null) {
+            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.USERNAME_NOT_EXIST, username);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(new UserScoreResponse(user));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

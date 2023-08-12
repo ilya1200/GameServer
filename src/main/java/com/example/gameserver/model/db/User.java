@@ -20,6 +20,11 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "wins", nullable = false)
+    private int wins;
+
+    @Column(name = "losses", nullable = false)
+    private int losses;
     // Other fields and relationships can be defined here
 
     // Getters and setters
@@ -49,6 +54,22 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public void incrementWins(){
+        this.wins+=1;
+    }
+
+    public void incrementLosses(){
+        this.losses+=1;
+    }
+
+    public int getWins() {
+        return wins;
+    }
+
+    public int getLosses() {
+        return losses;
     }
 
     // Other getters and setters
