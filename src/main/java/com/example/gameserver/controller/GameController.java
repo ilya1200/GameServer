@@ -81,6 +81,11 @@ public class GameController {
 
         try {
             game.makeMove(moveRequest.getMove(), player);
+            GameStatus gameStatus = game.getGameStatus();
+            if (gameStatus == GameStatus.PLAYER_1_WIN || gameStatus == GameStatus.PLAYER_2_WIN){
+                this.userRepository.save(game.getUserFirst());
+                this.userRepository.save(game.getUserSecond());
+            }
         } catch (GameException gameException) {
             return ServerUtils.createErrorResponse(Constants.MOVE, gameException.getErrorMessage());
         }
