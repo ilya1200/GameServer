@@ -8,7 +8,6 @@ import com.example.gameserver.jpa.UserRepository;
 import com.example.gameserver.manager.GameItemManger;
 import com.example.gameserver.model.db.User;
 import com.example.gameserver.model.rest.game.GameRequest;
-import com.example.gameserver.model.rest.game.GameResponse;
 import com.example.gameserver.model.rest.game_item.GameItemPatchActionRequest;
 import com.example.gameserver.model.rest.game_item.GameItemResponse;
 import com.example.gameserver.utils.Constants;

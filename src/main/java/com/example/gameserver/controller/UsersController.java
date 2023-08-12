@@ -2,7 +2,6 @@ package com.example.gameserver.controller;
 
 import com.example.gameserver.jpa.UserRepository;
 import com.example.gameserver.model.db.User;
-import com.example.gameserver.model.rest.game.GameResponse;
 import com.example.gameserver.model.rest.user.UserRequest;
 import com.example.gameserver.model.rest.user.UserScoreResponse;
 import com.example.gameserver.utils.Constants;
