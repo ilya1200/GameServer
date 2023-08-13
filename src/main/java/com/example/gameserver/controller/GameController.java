@@ -28,11 +28,16 @@ public class GameController {
     }
 
     public static ResponseEntity<?> leaveGame(User user, Game game) {
+        GameStatus gameStatus = game.getGameStatus();
         if (game.isFirstUser(user)) {
-            game.setGameStatus(GameStatus.PLAYER_1_LEFT);
+            if(gameStatus == GameStatus.WAITING_TO_START || gameStatus == GameStatus.PLAYING || gameStatus == GameStatus.PLAYER_2_LEFT){
+                game.setGameStatus(GameStatus.PLAYER_1_LEFT);
+            }
             game.clearFirstUser();
         } else if (game.isSecondUser(user)) {
-            game.setGameStatus(GameStatus.PLAYER_2_LEFT);
+            if(gameStatus == GameStatus.WAITING_TO_START || gameStatus == GameStatus.PLAYING || gameStatus == GameStatus.PLAYER_1_LEFT){
+                game.setGameStatus(GameStatus.PLAYER_2_LEFT);
+            }
             game.clearSecondUser();
         }else{
             return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.UNAUTHORIZED);
