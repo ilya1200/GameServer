@@ -1,105 +1,63 @@
-package com.example.gameserver.games.tiktaktoe;
+package com.example.gameserver.games.tic_tac_toe;
 
 import com.example.gameserver.games.Board;
-import com.example.gameserver.games.BoardStatus;
-import com.example.gameserver.games.Move;
+import com.example.gameserver.games.GameException;
 import com.example.gameserver.games.Player;
-import com.example.gameserver.model.ErrorMessage;
+import com.example.gameserver.utils.ErrorMessage;
 import org.springframework.data.util.Pair;
 
-import java.util.Vector;
+import java.util.HashMap;
+import java.util.Map;
 
-public class TicTacToeBoard implements Board{
+public class TicTacToeBoard implements Board {
     private static final int BOARD_SIZE = 3;
-
     private final Player[][] cell;
-    private Player currentPlayer;
 
-    private boolean isGameFinished;
+    private final Map<String, Pair<Integer, Integer>> moveMap = new HashMap<>();
 
-    private final Vector<Move> moves;
 
-    public TicTacToeBoard(){
+    public TicTacToeBoard() {
         cell = new Player[BOARD_SIZE][BOARD_SIZE];
         for (int row = 0; row < BOARD_SIZE; row++) {
             for (int col = 0; col < BOARD_SIZE; col++) {
                 cell[row][col] = null;
             }
         }
-        currentPlayer = Player.FIRST;
-        isGameFinished = false;
-        moves = new Vector<>();
+
+        moveMap.put("1", Pair.of(0, 0));
+        moveMap.put("2", Pair.of(0, 1));
+        moveMap.put("3", Pair.of(0, 2));
+        moveMap.put("4", Pair.of(1, 0));
+        moveMap.put("5", Pair.of(1, 1));
+        moveMap.put("6", Pair.of(1, 2));
+        moveMap.put("7", Pair.of(2, 0));
+        moveMap.put("8", Pair.of(2, 1));
+        moveMap.put("9", Pair.of(2, 2));
     }
 
+    private Pair<Integer, Integer> parseMove(String move) {
+        final String PATTERN = "[1-9]";
 
-    private void switchPlayer() {
-        if (currentPlayer == Player.FIRST) {
-            currentPlayer = Player.SECOND;
-        } else {
-            currentPlayer = Player.FIRST;
-        }
-    }
-
-    private Pair<Integer, Integer> parseMove(String move){
-        final String PATTERN = "[a-c][1-3]";
-
-        if (move == null || !move.matches(PATTERN)){
-            throw new IllegalStateException(String.format("Expected move to match the pattern: %s, but actual: %s",PATTERN, move));
+        if (move == null || !move.matches(PATTERN)) {
+            throw new IllegalStateException(String.format("Expected move to match the pattern: %s, but actual: %s", PATTERN, move));
         }
 
-        final int COL = move.charAt(0)-'a';
-        final int ROW = move.charAt(1)-'1';
-
-        return Pair.of(ROW, COL);
+        return moveMap.get(move);
     }
 
     @Override
     public void makeMove(String move, Player player) {
         Pair<Integer, Integer> position = parseMove(move);
-        int row = position.getFirst() ;
+        int row = position.getFirst();
         int col = position.getSecond();
 
-        if (isGameFinished){
-            throw new GameException(ErrorMessage.GAME_OVER);
-        }
-        if (player!=currentPlayer){
-            throw new GameException(ErrorMessage.ILLEGAL_MOVE);
-        }
-
-        this.makeMove(player, row, col);
-
-        BoardStatus boardStatus;
-        if(isWin()){
-            isGameFinished = true;
-            System.out.println("Player " + (currentPlayer == Player.FIRST ? Player.FIRST : Player.SECOND) + " won!");
-            boardStatus = BoardStatus.FINISHED_WIN;
-        } else if (isDraw()) {
-            isGameFinished = true;
-            System.out.println("Draw!");
-            boardStatus = BoardStatus.FINISHED_DRAW;
-        }else{
-            switchPlayer();
-            boardStatus = BoardStatus.PLAYING;
-        }
-        moves.add(new Move(move, player, boardStatus));
-    }
-
-    @Override
-    public Move getLastMove() {
-        if (moves.isEmpty()){
-            return null;
-        }
-        return moves.lastElement();
-    }
-
-    private void makeMove(Player player, int row, int col) throws IllegalArgumentException {
-        if(!isValidMove(row,col)){
+        if (!isValidMove(row, col)) {
             throw new GameException(ErrorMessage.ILLEGAL_MOVE);
         }
         cell[row][col] = player;
     }
 
-    public boolean isValidMove(int row, int column) {
+    private boolean isValidMove(int row, int column) {
         boolean is_move_in_bound = (row >= 0 && row < BOARD_SIZE && column >= 0 && column < BOARD_SIZE);
         return is_move_in_bound && cell[row][column] == null;
     }
@@ -166,14 +124,13 @@ public class TicTacToeBoard implements Board{
         return true;
     }
 
-    public void displayBoard() {
-        for (Player[] players : cell) {
-            for (Player aPlayer : players) {
-                char aChar = aPlayer == null? ' ':aPlayer==Player.FIRST?'X':'O';
-                System.out.print(" | " + aChar + " | ");
-            }
-            System.out.println();
-        }
+    @Override
+    public Player[][] getBoard() {
+        return cell;
     }
 
+    @Override
+    public int getBoardSize() {
+        return BOARD_SIZE;
+    }
 }

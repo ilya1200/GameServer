@@ -1,6 +1,6 @@
-package com.example.gameserver.model.rest;
+package com.example.gameserver.model.rest.game;
 
-import com.example.gameserver.model.GameType;
+import com.example.gameserver.games.GameType;
 import jakarta.validation.constraints.NotNull;
 
 public class GameRequest {

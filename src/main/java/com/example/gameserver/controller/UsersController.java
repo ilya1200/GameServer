@@ -1,10 +1,11 @@
-package com.example.gameserver;
+package com.example.gameserver.controller;
 
 import com.example.gameserver.jpa.UserRepository;
-import com.example.gameserver.model.ErrorMessage;
 import com.example.gameserver.model.db.User;
-import com.example.gameserver.model.rest.UserRequest;
+import com.example.gameserver.model.rest.user.UserRequest;
+import com.example.gameserver.model.rest.user.UserScoreResponse;
 import com.example.gameserver.utils.Constants;
+import com.example.gameserver.utils.ErrorMessage;
 import com.example.gameserver.utils.ServerUtils;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -26,9 +27,8 @@ public class UsersController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> signUp(@RequestBody @Valid UserRequest request){
-        if(this.userRepository.existsByUsername(request.getUsername()))
-        {
+    public ResponseEntity<?> signUp(@RequestBody @Valid UserRequest request) {
+        if (this.userRepository.existsByUsername(request.getUsername())) {
             return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.USERNAME_EXIST, request.getUsername());
         }
         this.userRepository.save(User.createFromUserRequest(request));
@@ -36,17 +36,26 @@ public class UsersController {
     }
 
     @GetMapping()
-    public ResponseEntity<?> logIn(@RequestParam(Constants.USERNAME) String username, @RequestParam(Constants.PASSWORD) String password){
+    public ResponseEntity<?> logIn(@RequestParam(Constants.USERNAME) String username, @RequestParam(Constants.PASSWORD) String password) {
         User user = this.userRepository.findByUsername(username);
-        if(user == null)
-        {
+        if (user == null) {
             return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.USERNAME_NOT_EXIST, username);
         }
-        if(!password.equals(user.getPassword())){
+        if (!password.equals(user.getPassword())) {
             return ServerUtils.createErrorResponse(Constants.PASSWORD, ErrorMessage.WRONG_PASSWORD);
         }
 
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/score")
+    public ResponseEntity<?> getScore(@RequestParam(Constants.USERNAME) String username) {
+        User user = this.userRepository.findByUsername(username);
+        if (user == null) {
+            return ServerUtils.createErrorResponse(Constants.USERNAME, ErrorMessage.USERNAME_NOT_EXIST, username);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(new UserScoreResponse(user));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

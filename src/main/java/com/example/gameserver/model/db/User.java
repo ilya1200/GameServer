@@ -1,6 +1,6 @@
 package com.example.gameserver.model.db;
 
-import com.example.gameserver.model.rest.UserRequest;
+import com.example.gameserver.model.rest.user.UserRequest;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -20,9 +20,21 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "wins", nullable = false)
+    private int wins;
+
+    @Column(name = "losses", nullable = false)
+    private int losses;
     // Other fields and relationships can be defined here
 
     // Getters and setters
+
+    public static User createFromUserRequest(UserRequest request) {
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPassword(request.getPassword());
+        return user;
+    }
 
     public Long getId() {
         return id;
@@ -44,17 +56,26 @@ public class User {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void incrementWins(){
+        this.wins+=1;
+    }
+
+    public void incrementLosses(){
+        this.losses+=1;
+    }
+
+    public int getWins() {
+        return wins;
+    }
+
+    public int getLosses() {
+        return losses;
     }
 
     // Other getters and setters
 
-    public static User createFromUserRequest(UserRequest request){
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
-        return user;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
